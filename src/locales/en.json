@@ -1,3 +1,13 @@
 {
-  
+  "action": {
+    "continue": "Continue",
+    "next": "Next",
+    "back": "Back"
+  },
+  "form": {
+    "enterPhone": "Enter phone number",
+    "toLoginOrRegister": "To login or register",
+    "terms": "Terms",
+    "privacy": "Privacy"
+  }
 }

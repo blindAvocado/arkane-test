@@ -1,5 +1,11 @@
 type TChannelType = 'telegram' | 'sms' | 'whatsapp'
 
+type TLang = 'ru' | 'eng'
+
+interface IParams {
+  lang?: TLang
+}
+
 interface IResponseOut {
   success: boolean
   error?: Array<string>
@@ -25,12 +31,29 @@ export interface ICreateOut extends IResponseOut {
   }
 }
 
-export interface ICreateInParams {
-  phone: string
+export interface ISendOut extends IResponseOut {
+  data: {
+    session_id: string
+    client_channels: Array<IClientChannel>
+  }
 }
 
 export interface ICheckOut extends IResponseOut {
   data: {
     verify_token: string
   }
+}
+
+export interface ICreateInParams extends IParams {
+  phone: string
+}
+
+export interface ISendInParams extends IParams {
+  session_id: string
+  type?: TChannelType
+}
+
+export interface ICheckInParams extends IParams {
+  session_id: string
+  code: string
 }
