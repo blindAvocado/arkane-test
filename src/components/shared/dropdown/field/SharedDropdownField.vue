@@ -43,6 +43,7 @@
             :options
             @select-option="onSelectOption"
             @focus="setIsShown(true)"
+            @clear="emit('clear')"
           >
             <template #option="{ item }">
               <slot
@@ -73,6 +74,7 @@ interface Props {
 interface Emits {
   (e: 'select-option', value: TOption | null): void
   (e: 'blur'): void
+  (e: 'clear'): void
 }
 
 const props = defineProps<Props>()

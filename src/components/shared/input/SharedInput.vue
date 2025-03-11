@@ -1,5 +1,7 @@
 <template>
-  <SharedInputContainer>
+  <SharedInputContainer
+    :error
+  >
     <input
       :id
       v-model="value"
@@ -7,7 +9,8 @@
       :class="twMerge(
         `peer block w-full cursor-text appearance-none rounded-[4px]
         border border-custom-gray-500 p-4 text-base text-black`,
-        inputClasses
+        inputClasses,
+        error && 'border-custom-red'
       )"
       type="text"
       @blur="$emit('update:blur')"
@@ -23,6 +26,9 @@
         peer-placeholder-shown:scale-100
         peer-focus:-translate-y-3 peer-focus:translate-x-[18px] peer-focus:scale-[0.8]
         peer-focus:px-1"
+      :class="{
+        'text-custom-red': error
+      }"
     >
       {{ label }}
     </label>
@@ -47,7 +53,7 @@ interface Emits {
   (e: 'update:blur'): unknown
 }
 
-const props = withDefaults(
+withDefaults(
   defineProps<Props>(), {
     labelShouldFloat: true,
     placeholder: ' '

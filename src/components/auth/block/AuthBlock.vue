@@ -23,11 +23,11 @@
         <KeepAlive>
           <AuthBlockFormPhone
             v-if="activeStep === 'phone'"
-            @next="onNext"
+            @submit="onSubmitPhone"
           />
           <AuthBlockFormCode
             v-else-if="activeStep === 'code'"
-            @next="onNext"
+            @submit="onSubmitCode"
             @prev="onPrev"
           />
         </KeepAlive>
@@ -50,5 +50,13 @@ const onNext = () => {
 
 const onPrev = () => {
   activeStepIndex.value--
+}
+
+const onSubmitPhone = () => {
+  onNext()
+}
+
+const onSubmitCode = () => {
+
 }
 </script>

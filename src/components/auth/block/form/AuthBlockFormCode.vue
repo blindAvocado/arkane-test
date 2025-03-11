@@ -8,12 +8,21 @@
         @select-option="onSelectSocial"
       >
         <span class="absolute left-4 top-4 text-base text-black">
-          <!-- {{ selectedCountryName }} -->
+          {{ channelType?.label }}
         </span>
-        <!-- <template #option="{ item }">
+        <template #option="{ item }">
           <span class="flex w-full items-center gap-2.5">
+            <component
+              :is="item.icon"
+              class="size-6 rounded-[7px]"
+              :font-controlled="false"
+              :filled="true"
+            />
+            <span class="text-base leading-none text-black">
+              {{ item.label }}
+            </span>
           </span>
-        </template> -->
+        </template>
       </SharedDropdownField>
 
       <SharedInput
@@ -45,7 +54,7 @@
       </SharedButton>
       <SharedButton
         class="w-full"
-        @click.prevent="emit('next')"
+        @click.prevent="emit('submit')"
       >
         {{ $t('action.continue') }}
       </SharedButton>
@@ -53,9 +62,12 @@
   </form>
 </template>
 <script setup lang="ts">
+import { SvgoSocialWhatsapp, SvgoSocialSms, SvgoSocialTelegram, SvgoSocialViber } from '#components'
+import type { ISocialItem } from '~/stores/auth'
+
 interface Emits {
   (e: 'prev'): void
-  (e: 'next'): void
+  (e: 'submit'): void
 }
 
 const emit = defineEmits<Emits>()
@@ -64,11 +76,40 @@ const authStore = useAuthStore()
 
 const { channelType, code } = storeToRefs(authStore)
 
-const socialItems = ref([])
+const socialItems = ref<ISocialItem[]>([
+  {
+    label: 'WhatsApp',
+    value: 'whatsapp',
+    icon: SvgoSocialWhatsapp
+  },
+  {
+    label: 'Telegram',
+    value: 'telegram',
+    icon: SvgoSocialTelegram
+  },
+  {
+    label: 'Viber',
+    value: 'viber',
+    icon: SvgoSocialViber
+  },
+  {
+    label: 'SMS',
+    value: 'sms',
+    icon: SvgoSocialSms
+  }
+])
 
-const onSelectSocial = () => {}
+const onSelectSocial = (item: ISocialItem | null) => {
+  if (item) {
+    channelType.value = item
+  }
+}
 
 const onSend = () => {
 
 }
+
+onMounted(() => {
+  channelType.value = socialItems.value[0]
+})
 </script>

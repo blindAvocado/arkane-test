@@ -8,23 +8,25 @@
         :label="$t('form.country')"
         search-mode
         @select-option="onSelectCountry"
+        @clear="query = ''"
       >
         <span class="absolute left-4 top-4 text-base text-black">
           {{ selectedCountryName }}
         </span>
         <template #option="{ item }">
-          <span class="flex w-full items-center gap-2.5">
-            <span
-              class="size-5"
-              v-html="Flags[item.value]"
-            />
+          <div class="flex w-full items-center gap-2.5">
+            <span>
+              <CountryFlag
+                :country="item.value"
+              />
+            </span>
             <span class="text-left">
               {{ getCountryItemName(item) }}
             </span>
             <span class="ml-auto font-bold">
               {{ item.dial_code }}
             </span>
-          </span>
+          </div>
         </template>
       </SharedDropdownField>
 
@@ -43,12 +45,12 @@
   </form>
 </template>
 <script setup lang="ts">
+import CountryFlag from 'vue-country-flag-next'
 import { useCountryCodes, type IDialCountry } from '~/composable/useCountryCodes'
 import { useLocale } from '~/composable/useLocale'
-const Flags: Record<string, unknown> = await import('country-flag-icons/string/1x1')
 
 interface Emits {
-  (e: 'next'): void
+  (e: 'submit'): void
 }
 
 const emit = defineEmits<Emits>()
@@ -90,7 +92,7 @@ const getCountryItemName = (item: IDialCountry) => {
 }
 
 const submitPhone = () => {
-  emit('next')
+  emit('submit')
 }
 
 onMounted(() => {
