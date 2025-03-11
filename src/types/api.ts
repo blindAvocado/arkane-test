@@ -12,7 +12,7 @@ interface IResponseOut {
   status?: number
 }
 
-interface IClientChannel {
+export interface IClientChannel {
   name: string
   type: TChannelType
   is_active: boolean
@@ -34,7 +34,7 @@ export interface ICreateOut extends IResponseOut {
 export interface ISendOut extends IResponseOut {
   data: {
     session_id: string
-    client_channels: Array<IClientChannel>
+    client_channel: IClientChannel
   }
 }
 

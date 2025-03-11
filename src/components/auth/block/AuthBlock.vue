@@ -27,6 +27,8 @@
           />
           <AuthBlockFormCode
             v-else-if="activeStep === 'code'"
+            :remaining-time
+            @send="onSendCode"
             @submit="onSubmitCode"
             @prev="onPrev"
           />
@@ -36,9 +38,12 @@
   </AuthBlockWrapper>
 </template>
 <script setup lang="ts">
+import { useCountdown } from '~/composable/useCountdown'
+
 const authStore = useAuthStore()
 
-const { steps, activeStepIndex } = storeToRefs(authStore)
+const { steps, activeStepIndex, delay } = storeToRefs(authStore)
+const { remainingTime, startCountdown } = useCountdown(delay)
 
 const activeStep = computed(() => {
   return steps.value[activeStepIndex.value]?.name
@@ -52,11 +57,23 @@ const onPrev = () => {
   activeStepIndex.value--
 }
 
-const onSubmitPhone = () => {
-  onNext()
+const onSubmitPhone = async () => {
+  try {
+    await authStore.createSession()
+    onNext()
+  } catch {}
 }
 
-const onSubmitCode = () => {
+const onSendCode = async () => {
+  try {
+    await authStore.sendCode()
+    startCountdown()
+  } catch {}
+}
 
+const onSubmitCode = async () => {
+  try {
+    await authStore.checkCode()
+  } catch {}
 }
 </script>

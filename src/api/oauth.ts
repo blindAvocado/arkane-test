@@ -29,7 +29,7 @@ export const sendCode = (params: ISendInParams) => {
 
 /** Проверить код и создать верификационный токен */
 export const checkCode = (params: ICheckInParams) => {
-  const url = '/message/send'
+  const url = '/message/check'
 
   return localFetch<ICheckOut>(url, {
     method: 'GET',

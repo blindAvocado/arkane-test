@@ -1,7 +1,9 @@
+import { FetchError } from 'ofetch'
 import * as API from '~/api/oauth'
-import type { IDialCountry } from '~/composable/useCountryCodes'
 import { useLocale } from '~/composable/useLocale'
-import type { TChannelType } from '~/types/api'
+import type { IDialCountry } from '~/composable/useCountryCodes'
+import type { IClientChannel, TChannelType } from '~/types/api'
+import type { InputError } from '~/types/error'
 
 export interface ISocialItem {
   label: string
@@ -17,9 +19,12 @@ interface AuthState {
   country: IDialCountry | null
   phone: string
   channelType: ISocialItem | null
-  code: string,
+  code: string
 
+  channels: Array<IClientChannel>
   session: string
+  delay: number
+  codeError: InputError | null
 }
 
 function createInitialState(): AuthState {
@@ -35,7 +40,10 @@ function createInitialState(): AuthState {
     channelType: null,
     code: '',
 
-    session: ''
+    channels: [],
+    session: '',
+    delay: 30,
+    codeError: null
   }
 }
 
@@ -43,6 +51,10 @@ export const useAuthStore = defineStore('authStore', () => {
   const state = reactive(createInitialState())
 
   const { selectedLocale } = useLocale()
+
+  const checkIsChannelActive = (type: TChannelType) => {
+    const channel = state.channels.find(c => c.type === type)
+  }
 
   const _formatLang = (locale: 'ru' | 'en') => {
     switch (locale) {
@@ -53,33 +65,51 @@ export const useAuthStore = defineStore('authStore', () => {
     }
   }
 
-  const createSession = () => {
+  const createSession = async () => {
     try {
-      API.createSession({
-        phone: state.phone,
+      const resp = await API.createSession({
+        phone: convertToNumeric(state.phone),
         lang: _formatLang(selectedLocale.value)
       })
+
+      state.session = resp.data.session_id
+      state.channels = resp.data.client_channels
     } catch {}
   }
 
-  const sendCode = () => {
+  const sendCode = async () => {
     try {
-      API.sendCode({
+      const resp = await API.sendCode({
         session_id: state.session,
         type: state.channelType?.value,
         lang: _formatLang(selectedLocale.value)
       })
-    } catch {}
+      state.delay = resp.data?.client_channel?.timeout
+      state.codeError = null
+    } catch (e) {
+      if (e instanceof FetchError) {
+        state.codeError = { message: e.data?.error }
+        state.delay = e.data?.error_params?.timeout ?? 30
+      }
+    }
   }
 
-  const checkCode = () => {
+  const checkCode = async () => {
     try {
-      API.checkCode({
+      const resp = await API.checkCode({
         session_id: state.session,
         code: state.code,
         lang: _formatLang(selectedLocale.value)
       })
-    } catch {}
+
+      state.codeError = null
+
+      console.log('Verify token:', resp.data.verify_token)
+    } catch (e) {
+      if (e instanceof FetchError) {
+        state.codeError = { message: e.data?.error }
+      }
+    }
   }
 
   const $reset = () => {

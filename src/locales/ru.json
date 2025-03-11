@@ -17,5 +17,10 @@
     "search": "Поиск",
     "codeMethod": "Способ получения кода"
   },
-  "nothingFound": "Ничего не найдено"
+  "nothingFound": "Ничего не найдено",
+  "error": {
+    "required": "Заполните поле",
+    "invalidCode": "Код введен неверно",
+    "invalidFormat": "Неверный формат номера"
+  }
 }

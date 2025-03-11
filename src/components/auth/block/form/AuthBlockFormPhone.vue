@@ -30,9 +30,11 @@
         </template>
       </SharedDropdownField>
 
-      <SharedInput
+      <SharedInputMaskedPhone
         id="phone"
         v-model="phone"
+        :error="phoneError"
+        :prefix="country?.dial_code"
         :label="$t('form.phoneNumber')"
       />
     </div>
@@ -48,6 +50,7 @@
 import CountryFlag from 'vue-country-flag-next'
 import { useCountryCodes, type IDialCountry } from '~/composable/useCountryCodes'
 import { useLocale } from '~/composable/useLocale'
+import type { InputError } from '~/types/error'
 
 interface Emits {
   (e: 'submit'): void
@@ -57,9 +60,16 @@ const emit = defineEmits<Emits>()
 
 const authStore = useAuthStore()
 const { selectedLocale } = useLocale()
+const { t } = useI18n()
 
 const { phone, country } = storeToRefs(authStore)
 const { query, renderedList } = useCountryCodes()
+
+const phoneError = ref<InputError | null>(null)
+
+const selectedCountryPrefix = computed(() => {
+  return country.value?.dial_code ?? '+7'
+})
 
 const selectedCountryName = computed(() => {
   if (selectedLocale.value === 'en') {
@@ -92,7 +102,9 @@ const getCountryItemName = (item: IDialCountry) => {
 }
 
 const submitPhone = () => {
-  emit('submit')
+  if (phone.value && !phoneError.value) {
+    emit('submit')
+  }
 }
 
 onMounted(() => {
@@ -100,6 +112,21 @@ onMounted(() => {
 
   if (found) {
     country.value = found
+  }
+})
+
+watch(phone, (val) => {
+  const prefix = selectedCountryPrefix.value
+
+  const escapedPrefix = prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const pattern = new RegExp(`^${escapedPrefix} \\d{10}$`)
+
+  const isValid = pattern.test(val)
+
+  if (isValid) {
+    phoneError.value = null
+  } else {
+    phoneError.value = { message: t('error.invalidFormat') }
   }
 })
 </script>

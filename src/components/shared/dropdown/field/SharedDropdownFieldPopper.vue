@@ -17,6 +17,7 @@
           :filled="true"
         />
         <button
+          v-if="query"
           type="button"
           class="absolute right-0.5 top-1/2 -translate-y-1/2 p-2"
           @click.prevent="emit('clear')"

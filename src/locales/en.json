@@ -17,5 +17,10 @@
     "search": "Search",
     "codeMethod": "Code recieve method"
   },
-  "nothingFound": "Nothing was found"
+  "nothingFound": "Nothing was found",
+  "error": {
+    "required": "Fill the field",
+    "invalidCode": "Invalid code",
+    "invalidFormat": "Invalid phone format"
+  }
 }

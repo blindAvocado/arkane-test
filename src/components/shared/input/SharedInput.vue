@@ -5,6 +5,7 @@
     <input
       :id
       v-model="value"
+      v-bind="$attrs"
       :placeholder
       :class="twMerge(
         `peer block w-full cursor-text appearance-none rounded-[4px]
