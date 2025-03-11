@@ -1,28 +1,54 @@
 <template>
   <AuthBlockWrapper>
-    <slot name="logo">
-      <div class="flex h-10 max-w-[299px] items-center justify-center bg-custom-gray-400">
-        <span class="text-custom-gray-700">Логотип (Высота 40px, длина до 300px)</span>
-      </div>
-    </slot>
-
-    <div class="flex flex-col gap-3.5 text-center leading-none">
-      <h3 class="text-[32px] font-medium text-black">
-        <slot name="title">
+    <AuthBlockContent>
+      <template #title>
+        <template v-if="activeStep === 'phone'">
           {{ $t('form.enterPhone') }}
-        </slot>
-      </h3>
-      <h6 class="text-base text-custom-gray-900">
-        <slot name="subtitle">
+        </template>
+        <template v-else-if="activeStep === 'code'">
+          {{ $t('form.enterCode') }}
+        </template>
+      </template>
+
+      <template #subtitle>
+        <template v-if="activeStep === 'phone'">
           {{ $t('form.toLoginOrRegister') }}
-        </slot>
-      </h6>
-    </div>
+        </template>
+        <template v-else-if="activeStep === 'code'">
+          {{ $t('form.sentToNumber') }}
+        </template>
+      </template>
 
-    <AuthBlockForm />
-
-    <AuthBlockFooter class="mt-[70px]" />
+      <template #form>
+        <KeepAlive>
+          <AuthBlockFormPhone
+            v-if="activeStep === 'phone'"
+            @next="onNext"
+          />
+          <AuthBlockFormCode
+            v-else-if="activeStep === 'code'"
+            @next="onNext"
+            @prev="onPrev"
+          />
+        </KeepAlive>
+      </template>
+    </AuthBlockContent>
   </AuthBlockWrapper>
 </template>
 <script setup lang="ts">
+const authStore = useAuthStore()
+
+const { steps, activeStepIndex } = storeToRefs(authStore)
+
+const activeStep = computed(() => {
+  return steps.value[activeStepIndex.value]?.name
+})
+
+const onNext = () => {
+  activeStepIndex.value++
+}
+
+const onPrev = () => {
+  activeStepIndex.value--
+}
 </script>

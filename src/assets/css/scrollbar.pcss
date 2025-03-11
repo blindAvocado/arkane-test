@@ -1,0 +1,60 @@
+.tc-hoverable-scrollbar {
+  /* ширина полосы прокрутки */
+  --scrollbar-width: theme('width.2');
+
+  /* цвет элементов полосы прокрутки изначально */
+  --scrollbar-track-color: transparent;
+  --scrollbar-thumb-color: transparent;
+
+  /* цвет элементов полосы прокрутки при наведении мыши на весь контейнер */
+  --scrollbar-hovered-track-color: transparent;
+  --scrollbar-hovered-thumb-color: transparent;
+
+  /* цвет элементов полосы прокрутки при наведении мыши на саму полосу прокрутки */
+  --scrollbar-track-hovered-color: transparent;
+  --scrollbar-thumb-hovered-color: rgb(102, 102, 102);
+
+  @supports not selector(::-webkit-scrollbar) {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
+  }
+
+  &::-webkit-scrollbar {
+    cursor: default;
+    width: calc(var(--scrollbar-width) * 0.5);
+  }
+
+  &::-webkit-scrollbar-track,
+  &::-webkit-scrollbar-thumb {
+    border-radius: var(--scrollbar-width);
+    border: var(--scrollbar-width) solid var(--scrollbar-track-color);
+  }
+
+  &::-webkit-scrollbar-track {
+    border-color: var(--scrollbar-track-color);
+    &:hover {
+      border-color: var(--scrollbar-track-hovered-color);
+    }
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-color: var(--scrollbar-thumb-color);
+    &:hover {
+      border-color: var(--scrollbar-thumb-hovered-color);
+    }
+  }
+
+  &:hover, &:focus, &:focus-within {
+    @supports not selector(::-webkit-scrollbar) {
+      scrollbar-color: var(--scrollbar-hovered-thumb-color) var(--scrollbar-hovered-track-color);
+    }
+
+    &::-webkit-scrollbar-track {
+      border-color: var(--scrollbar-hovered-track-color);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-color: var(--scrollbar-hovered-thumb-color);
+    }
+  }
+}

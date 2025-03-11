@@ -4,12 +4,14 @@
     class="relative"
   >
     <VDropdown
+      :id
+      :aria-id="id"
       :distance
       :placement
       :container="popperWrapperRef"
       :no-auto-focus="true"
       :triggers="[]"
-      :auto-hide="() => setIsShown(false)"
+      :auto-hide="false"
       :shown="isShown"
       theme="shared-dropdown"
     >
@@ -24,17 +26,19 @@
         />
       </button>
       <template #popper>
-        <SharedDropdownSimplePopper
-          :options
-          @select-option="onSelectOption"
-        >
-          <template #option="{ item }">
-            <slot
-              name="option"
-              :item
-            />
-          </template>
-        </SharedDropdownSimplePopper>
+        <ClientOnly>
+          <SharedDropdownSimplePopper
+            :options
+            @select-option="onSelectOption"
+          >
+            <template #option="{ item }">
+              <slot
+                name="option"
+                :item
+              />
+            </template>
+          </SharedDropdownSimplePopper>
+        </ClientOnly>
       </template>
     </VDropdown>
   </div>
@@ -59,12 +63,12 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const popperWrapperRef = ref<HTMLDivElement>()
-const isShown = ref<boolean>(false)
-
 const selectedOption = defineModel<TOption | null>({
   default: null
 })
+
+const popperWrapperRef = ref<HTMLDivElement>()
+const isShown = ref<boolean>(false)
 
 const onBaseClick = () => {
   if (props.disabled) {

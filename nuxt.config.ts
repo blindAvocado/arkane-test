@@ -7,7 +7,8 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxtjs/i18n',
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/eslint-module'
+    '@nuxtjs/eslint-module',
+    'nuxt-svgo'
   ],
   runtimeConfig: {
     kodMobiApi: {

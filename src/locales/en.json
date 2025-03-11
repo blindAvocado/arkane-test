@@ -2,12 +2,20 @@
   "action": {
     "continue": "Continue",
     "next": "Next",
-    "back": "Back"
+    "back": "Back",
+    "send": "Send"
   },
   "form": {
     "enterPhone": "Enter phone number",
     "toLoginOrRegister": "To login or register",
+    "enterCode": "Enter code",
+    "sentToNumber": "Sent to number {phone}",
     "terms": "Terms",
-    "privacy": "Privacy"
-  }
+    "privacy": "Privacy",
+    "phoneNumber": "Phone number",
+    "country": "Country",
+    "search": "Search",
+    "codeMethod": "Code recieve method"
+  },
+  "nothingFound": "Nothing was found"
 }

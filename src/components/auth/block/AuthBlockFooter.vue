@@ -1,6 +1,7 @@
 <template>
   <div class="flex items-center justify-between">
     <SharedDropdownSimple
+      id="locale_dropdown"
       :options
       placement="bottom"
       @select-option="onChangeLocale"

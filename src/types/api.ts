@@ -1,4 +1,4 @@
-type TChannelType = 'telegram' | 'sms' | 'whatsapp'
+export type TChannelType = 'telegram' | 'sms' | 'whatsapp' | 'viber'
 
 type TLang = 'ru' | 'eng'
 
@@ -21,7 +21,7 @@ interface IClientChannel {
   image_url: string
   link: string
   sorting: number
-} 
+}
 
 export interface ICreateOut extends IResponseOut {
   data: {
