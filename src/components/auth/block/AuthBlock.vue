@@ -24,7 +24,7 @@
           {{ $t('form.toLoginOrRegister') }}
         </template>
         <template v-else-if="activeStep === 'code'">
-          {{ $t('form.sentToNumber') }}
+          {{ $t('form.sentToNumber', { phone: phone.replaceAll(' ', '') }) }}
         </template>
       </template>
 
@@ -54,6 +54,7 @@ const authStore = useAuthStore()
 const {
   steps,
   activeStepIndex,
+  phone,
   delay,
   channelType,
   channelInfo,
@@ -101,6 +102,18 @@ const onSendCode = async () => {
 }
 
 const onSubmitCode = async () => {
+  if (!channelType.value) {
+    return
+  }
+
+  const isActive = authStore.checkIsChannelActive(channelType.value.value)
+
+  if (!isActive) {
+    activeStepIndex.value = 2
+
+    return
+  }
+
   try {
     await authStore.checkCode()
   } catch {}

@@ -69,7 +69,7 @@
       <SharedButton
         class="w-full"
         :disabled="Boolean(remainingTime)"
-        @click.prevent="emit('submit')"
+        @click.prevent="onCheck"
       >
         {{ $t('action.continue') }}
       </SharedButton>
@@ -128,6 +128,12 @@ const onSelectSocial = (item: ISocialItem | null) => {
 
 const onSend = () => {
   emit('send')
+}
+
+const onCheck = () => {
+  if (code.value) {
+    emit('submit')
+  }
 }
 
 onMounted(() => {

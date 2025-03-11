@@ -158,7 +158,11 @@ export const useAuthStore = defineStore('authStore', () => {
       console.log('Verify token:', resp.data.verify_token)
     } catch (e) {
       if (e instanceof FetchError) {
-        state.codeError = { message: e.data?.error }
+        if (typeof e.data?.error === 'string') {
+          state.codeError = { message: e.data?.error }
+        } else if (Array.isArray(e.data?.error)) {
+          state.codeError = { message: e.data?.error?.[0] }
+        }
 
         if (e.data?.sys_message === 'ERROR_SESSION_EXPIRED') {
           state.session = ''
