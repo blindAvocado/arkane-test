@@ -16,8 +16,6 @@
     "@nuxtjs/i18n": "^9.3.1",
     "@nuxtjs/tailwindcss": "^6.13.1",
     "@pinia/nuxt": "^0.10.1",
-    "@vuelidate/core": "^2.0.3",
-    "@vuelidate/validators": "^2.0.4",
     "floating-vue": "^5.2.2",
     "maska": "^3.1.0",
     "nuxt": "^3.16.0",
