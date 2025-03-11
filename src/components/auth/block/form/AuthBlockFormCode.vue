@@ -95,7 +95,7 @@ defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const authStore = useAuthStore()
-const { channelType, code, delay, codeError } = storeToRefs(authStore)
+const { channelType, code, codeError } = storeToRefs(authStore)
 
 const socialItems = shallowRef<ISocialItem[]>([
   {

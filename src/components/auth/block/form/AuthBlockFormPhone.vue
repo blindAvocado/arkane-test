@@ -33,7 +33,7 @@
       <SharedInputMaskedPhone
         id="phone"
         v-model="phone"
-        :error="phoneError"
+        :error="validationPhoneError ?? fetchPhoneError"
         :prefix="country?.dial_code"
         :label="$t('form.phoneNumber')"
       />
@@ -62,10 +62,10 @@ const authStore = useAuthStore()
 const { selectedLocale } = useLocale()
 const { t } = useI18n()
 
-const { phone, country } = storeToRefs(authStore)
+const { phone, country, phoneError: fetchPhoneError } = storeToRefs(authStore)
 const { query, renderedList } = useCountryCodes()
 
-const phoneError = ref<InputError | null>(null)
+const validationPhoneError = ref<InputError | null>(null)
 
 const selectedCountryPrefix = computed(() => {
   return country.value?.dial_code ?? '+7'
@@ -102,8 +102,23 @@ const getCountryItemName = (item: IDialCountry) => {
 }
 
 const submitPhone = () => {
-  if (phone.value && !phoneError.value) {
+  if (phone.value && !validationPhoneError.value) {
     emit('submit')
+  }
+}
+
+const validatePhone = (value: string) => {
+  const prefix = selectedCountryPrefix.value
+
+  const escapedPrefix = prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const pattern = new RegExp(`^${escapedPrefix} \\d{10}$`)
+
+  const isValid = pattern.test(value)
+
+  if (isValid) {
+    validationPhoneError.value = null
+  } else {
+    validationPhoneError.value = { message: t('error.invalidFormat') }
   }
 }
 
@@ -116,17 +131,7 @@ onMounted(() => {
 })
 
 watch(phone, (val) => {
-  const prefix = selectedCountryPrefix.value
-
-  const escapedPrefix = prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const pattern = new RegExp(`^${escapedPrefix} \\d{10}$`)
-
-  const isValid = pattern.test(val)
-
-  if (isValid) {
-    phoneError.value = null
-  } else {
-    phoneError.value = { message: t('error.invalidFormat') }
-  }
+  fetchPhoneError.value = null
+  validatePhone(val)
 })
 </script>

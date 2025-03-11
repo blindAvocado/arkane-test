@@ -29,6 +29,7 @@ interface AuthState {
 
   session: string
   delay: number
+  phoneError: InputError | null
   codeError: InputError | null
 }
 
@@ -53,6 +54,7 @@ function createInitialState(): AuthState {
 
     session: '',
     delay: 30,
+    phoneError: null,
     codeError: null
   }
 }
@@ -90,9 +92,16 @@ export const useAuthStore = defineStore('authStore', () => {
         lang: _formatLang(selectedLocale.value)
       })
 
+      state.phoneError = null
       state.session = resp.data.session_id
       state.channels = resp.data.client_channels
-    } catch {}
+    } catch (e) {
+      if (e instanceof FetchError) {
+        state.phoneError = { message: e.data?.error?.[0] }
+
+        throw new Error(e.data?.error?.[0])
+      }
+    }
   }
 
   const sendCode = async () => {
@@ -108,6 +117,8 @@ export const useAuthStore = defineStore('authStore', () => {
       if (e instanceof FetchError) {
         state.codeError = { message: e.data?.error }
         state.delay = e.data?.error_params?.timeout ?? 30
+
+        throw new Error(e.data?.error?.[0])
       }
     }
   }
@@ -127,6 +138,8 @@ export const useAuthStore = defineStore('authStore', () => {
     } catch (e) {
       if (e instanceof FetchError) {
         state.codeError = { message: e.data?.error }
+
+        throw new Error(e.data?.error?.[0])
       }
     }
   }
