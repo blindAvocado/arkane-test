@@ -22,5 +22,9 @@
     "required": "Заполните поле",
     "invalidCode": "Код введен неверно",
     "invalidFormat": "Неверный формат номера"
+  },
+  "channel": {
+    "loginWithBot": "Авторизоваться в боте",
+    "checkStatus": "Проверить статус"
   }
 }

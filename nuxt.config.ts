@@ -8,7 +8,8 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     '@nuxtjs/tailwindcss',
     '@nuxtjs/eslint-module',
-    'nuxt-svgo'
+    'nuxt-svgo',
+    '@nuxt/image'
   ],
   runtimeConfig: {
     kodMobiApi: {

@@ -1,6 +1,15 @@
 <template>
   <AuthBlockWrapper>
-    <AuthBlockContent>
+    <AuthBlockChannel
+      v-if="channelInfo && activeStep === 'info'"
+      :data="channelInfo"
+      :error="authCheckError"
+      :is-check-loading="isAuthCheckLoading"
+      @prev="onPrev"
+      @auth="onChannelAuth"
+      @check-status="onCheckAuthStatus"
+    />
+    <AuthBlockContent v-else>
       <template #title>
         <template v-if="activeStep === 'phone'">
           {{ $t('form.enterPhone') }}
@@ -42,7 +51,15 @@ import { useCountdown } from '~/composable/useCountdown'
 
 const authStore = useAuthStore()
 
-const { steps, activeStepIndex, delay } = storeToRefs(authStore)
+const {
+  steps,
+  activeStepIndex,
+  delay,
+  channelType,
+  channelInfo,
+  isAuthCheckLoading,
+  authCheckError
+} = storeToRefs(authStore)
 const { remainingTime, startCountdown } = useCountdown(delay)
 
 const activeStep = computed(() => {
@@ -65,6 +82,18 @@ const onSubmitPhone = async () => {
 }
 
 const onSendCode = async () => {
+  if (!channelType.value) {
+    return
+  }
+
+  const isActive = authStore.checkIsChannelActive(channelType.value.value)
+
+  if (!isActive) {
+    activeStepIndex.value = 2
+
+    return
+  }
+
   try {
     await authStore.sendCode()
     startCountdown()
@@ -75,5 +104,22 @@ const onSubmitCode = async () => {
   try {
     await authStore.checkCode()
   } catch {}
+}
+
+const onChannelAuth = () => {
+  console.log('Тут будет авторизация')
+}
+
+const onCheckAuthStatus = async () => {
+  isAuthCheckLoading.value = true
+
+  try {
+    await new Promise((resolve, reject) => setTimeout(reject, 1000))
+    authCheckError.value = null
+  } catch {
+    authCheckError.value = { message: 'Вы все еще не авторизованы в боте, пожалуйста, повторите попытку' }
+  } finally {
+    isAuthCheckLoading.value = false
+  }
 }
 </script>

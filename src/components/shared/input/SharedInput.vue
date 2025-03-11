@@ -46,7 +46,6 @@ interface Props {
   label?: string
   error?: InputError
   disabled?: boolean
-  labelShouldFloat?: boolean
   inputClasses?: string
 }
 
@@ -65,17 +64,4 @@ defineEmits<Emits>()
 const value = defineModel<string>({
   default: ''
 })
-
-// const labelClasses = computed(() => {
-//   if (props.labelShouldFloat) {
-//     return `-z-1 -translate-y-3 translate-x-0 scale-[0.8] bg-white
-//         px-1 text-base leading-snug transition
-//         peer-placeholder-shown:translate-x-3 peer-placeholder-shown:translate-y-4
-//         peer-placeholder-shown:scale-100
-//         peer-focus:-translate-y-3 peer-focus:translate-x-0 peer-focus:scale-[0.8]
-//         peer-focus:px-1`
-//   } else {
-//     return 'hidden peer-placeholder-shown:block peer-focus:hidden'
-//   }
-// })
 </script>

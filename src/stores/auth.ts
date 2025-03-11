@@ -22,6 +22,11 @@ interface AuthState {
   code: string
 
   channels: Array<IClientChannel>
+
+  channelInfo: IClientChannel | null
+  isAuthCheckLoading: boolean
+  authCheckError: InputError | null
+
   session: string
   delay: number
   codeError: InputError | null
@@ -32,7 +37,7 @@ function createInitialState(): AuthState {
     steps: [
       { name: 'phone' },
       { name: 'code' },
-      { name: 'telegram' }
+      { name: 'info' }
     ],
     activeStepIndex: 0,
     country: null,
@@ -41,6 +46,11 @@ function createInitialState(): AuthState {
     code: '',
 
     channels: [],
+
+    channelInfo: null,
+    isAuthCheckLoading: false,
+    authCheckError: null,
+
     session: '',
     delay: 30,
     codeError: null
@@ -52,10 +62,6 @@ export const useAuthStore = defineStore('authStore', () => {
 
   const { selectedLocale } = useLocale()
 
-  const checkIsChannelActive = (type: TChannelType) => {
-    const channel = state.channels.find(c => c.type === type)
-  }
-
   const _formatLang = (locale: 'ru' | 'en') => {
     switch (locale) {
       case 'en':
@@ -63,6 +69,18 @@ export const useAuthStore = defineStore('authStore', () => {
       default:
         return locale
     }
+  }
+
+  const checkIsChannelActive = (type: TChannelType) => {
+    const channel = state.channels.find(c => c.type === type)
+
+    if (channel) {
+      state.channelInfo = channel
+
+      return channel.is_active
+    }
+
+    return true
   }
 
   const createSession = async () => {
@@ -103,6 +121,7 @@ export const useAuthStore = defineStore('authStore', () => {
       })
 
       state.codeError = null
+      state.code = ''
 
       console.log('Verify token:', resp.data.verify_token)
     } catch (e) {
@@ -121,6 +140,7 @@ export const useAuthStore = defineStore('authStore', () => {
     createSession,
     sendCode,
     checkCode,
+    checkIsChannelActive,
     $reset
   }
 })

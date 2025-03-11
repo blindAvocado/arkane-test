@@ -22,5 +22,9 @@
     "required": "Fill the field",
     "invalidCode": "Invalid code",
     "invalidFormat": "Invalid phone format"
+  },
+  "channel": {
+    "loginWithBot": "Login with bot",
+    "checkStatus": "Check status"
   }
 }

@@ -1,15 +1,22 @@
 <template>
   <button
     :class="themeClasses"
-    class="flex h-[55px] items-center justify-center rounded-[4px] bg-custom-blue px-4"
+    class="flex h-[55px] items-center justify-center rounded-[4px] bg-custom-blue px-4 font-medium"
   >
-    <slot />
+    <SvgoLoader
+      v-if="loading"
+      class="size-6 animate-spin"
+      :font-controlled="false"
+      :filled="false"
+    />
+    <slot v-else />
   </button>
 </template>
 <script setup lang="ts">
 interface Props {
   theme?: 'filled' | 'hollow'
   disabled?: boolean
+  loading?: boolean
 }
 
 const props = withDefaults(
