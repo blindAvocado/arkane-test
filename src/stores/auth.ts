@@ -97,7 +97,11 @@ export const useAuthStore = defineStore('authStore', () => {
       state.channels = resp.data.client_channels
     } catch (e) {
       if (e instanceof FetchError) {
-        state.phoneError = { message: e.data?.error?.[0] }
+        if (typeof e.data?.error === 'string') {
+          state.phoneError = { message: e.data?.error }
+        } else if (Array.isArray(e.data?.error)) {
+          state.phoneError = { message: e.data?.error?.[0] }
+        }
 
         throw new Error(e.data?.error?.[0])
       }
@@ -105,6 +109,10 @@ export const useAuthStore = defineStore('authStore', () => {
   }
 
   const sendCode = async () => {
+    if (!state.session) {
+      await createSession()
+    }
+
     try {
       const resp = await API.sendCode({
         session_id: state.session,
@@ -115,7 +123,16 @@ export const useAuthStore = defineStore('authStore', () => {
       state.codeError = null
     } catch (e) {
       if (e instanceof FetchError) {
-        state.codeError = { message: e.data?.error }
+        if (typeof e.data?.error === 'string') {
+          state.codeError = { message: e.data?.error }
+        } else if (Array.isArray(e.data?.error)) {
+          state.codeError = { message: e.data?.error?.[0] }
+        }
+
+        if (e.data?.sys_message === 'ERROR_SESSION_EXPIRED') {
+          state.session = ''
+        }
+
         state.delay = e.data?.error_params?.timeout ?? 30
 
         throw new Error(e.data?.error?.[0])
@@ -124,6 +141,10 @@ export const useAuthStore = defineStore('authStore', () => {
   }
 
   const checkCode = async () => {
+    if (!state.session) {
+      await createSession()
+    }
+
     try {
       const resp = await API.checkCode({
         session_id: state.session,
@@ -138,6 +159,10 @@ export const useAuthStore = defineStore('authStore', () => {
     } catch (e) {
       if (e instanceof FetchError) {
         state.codeError = { message: e.data?.error }
+
+        if (e.data?.sys_message === 'ERROR_SESSION_EXPIRED') {
+          state.session = ''
+        }
 
         throw new Error(e.data?.error?.[0])
       }
